@@ -7,22 +7,27 @@ ARG PNPM_VERSION=8.10.2
 ARG YARN_VERSION=3.6.4
 
 # See https://github.com/nodesource/distributions#installation-instructions
-ARG NODEJS_VERSION=16.13.2-deb-1nodesource1
+ARG NODEJS_VERSION=16.13.2
 
 # Check for updates at https://github.com/npm/cli/releases
 # This version should be compatible with the Node.js version declared above. See https://nodejs.org/en/download/releases as well
 # TODO: Upgrade to 9.6.7 depending on the outcome of https://github.com/npm/cli/issues/6742
 ARG NPM_VERSION=8.4.1
 
-# Install Node and npm
-RUN mkdir -p /etc/apt/keyrings \
-  && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-  && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODEJS_VERSION nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
-  && apt-get update \
+# Install Node
+RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-  nodejs \
-  && rm -rf /var/lib/apt/lists/* \
-  && npm install -g npm@$NPM_VERSION \
+  && rm -rf /var/lib/apt/lists/*
+RUN apt install -y curl
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . "$NVM_DIR/nvm.sh" && nvm install $NODEJS_VERSION
+RUN . "$NVM_DIR/nvm.sh" && nvm use v$NODEJS_VERSION
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v$NODEJS_VERSION
+ENV PATH="/root/.nvm/versions/node/v$NODEJS_VERSION/bin/:${PATH}"
+
+# Install npm
+RUN npm install -g npm@$NPM_VERSION \
   && rm -rf ~/.npm
 
 RUN corepack enable
