@@ -13,15 +13,14 @@ RUN apt-get update \
 && apt-get install -y curl \
 && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js version 16.13.2
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
-&& apt-get install -y nodejs=$NODEJS_VERSION-1nodesource1
+# Install Node.js
+RUN curl -fsSL https://nodejs.org/dist/v$NODEJS_VERSION/node-v$NODEJS_VERSION-linux-x64.tar.xz | tar -xJ -C /usr/local --strip-components=1
 
-# Install npm version 8.4.1
+# Symlink node to nodejs to avoid conflicts with other packages
+RUN ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
+# Install npm
 RUN npm install -g npm@$NPM_VERSION
-
-RUN echo "NODE Version:" && node --version
-RUN echo "NPM Version:" && npm --version
 
 USER dependabot
 
