@@ -7,7 +7,7 @@ ARG PNPM_VERSION=8.10.2
 ARG YARN_VERSION=3.6.4
 
 # See https://github.com/nodesource/distributions#installation-instructions
-ARG NODEJS_VERSION=16.13.2-1nodesource1
+ARG NODEJS_VERSION=16.13.2-deb-1nodesource1
 
 # Check for updates at https://github.com/npm/cli/releases
 # This version should be compatible with the Node.js version declared above. See https://nodejs.org/en/download/releases as well
