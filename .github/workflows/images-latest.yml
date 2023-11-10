@@ -1,6 +1,6 @@
 name: Latest images
 env:
-  UPDATER_IMAGE: "ghcr.io/dependabot/dependabot-updater-"  
+  UPDATER_IMAGE: "ghcr.io/mygrocerydeals/dependabot-updater-"  
   
 on:  # yamllint disable-line rule:truthy
   push:
