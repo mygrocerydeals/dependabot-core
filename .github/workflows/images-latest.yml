@@ -47,18 +47,25 @@ jobs:
         # despite the script input being $NAME, the resulting image is dependabot-updater-${ECOSYSTEM}
         run: script/build ${NAME}
 
-      - name: Tag the images with the SHA, `latest`, and the date version
-        run: |
-          docker tag "${UPDATER_IMAGE}${ECOSYSTEM}" "${UPDATER_IMAGE}${ECOSYSTEM}:$COMMIT_SHA"
-          docker tag "${UPDATER_IMAGE}${ECOSYSTEM}" "${UPDATER_IMAGE}${ECOSYSTEM}:latest"
-          docker tag "${UPDATER_IMAGE}${ECOSYSTEM}" "${UPDATER_IMAGE}${ECOSYSTEM}:${{ needs.date-version.outputs.date }}"
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         aws-region: us-east-1
 
-      - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Push the images to GHCR
-        run: docker push --all-tags "${UPDATER_IMAGE}${ECOSYSTEM}"
-
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+         push: true
+         tags: |
+          473733881755.dkr.ecr.us-east-1.amazonaws.com/workflows/dependabot-updater:$COMMIT_SHA
+          473733881755.dkr.ecr.us-east-1.amazonaws.com/workflows/dependabot-updater:${{ needs.date-version.outputs.date }}
+          473733881755.dkr.ecr.us-east-1.amazonaws.com/workflows/dependabot-updater:latest
+      
       - name: Set summary
         run: |
           echo "updater uploaded with tag \`$COMMIT_SHA\`" >> $GITHUB_STEP_SUMMARY
