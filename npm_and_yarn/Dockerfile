@@ -8,20 +8,26 @@ ARG NODEJS_VERSION=16.13.2
 # TODO: Upgrade to 9.6.7 depending on the outcome of https://github.com/npm/cli/issues/6742
 ARG NPM_VERSION=8.4.1
 
-# Install Node
+# Setup
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 RUN apt install -y curl
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Set up Node.js and npm
 ENV NVM_DIR=/root/.nvm
 RUN . "$NVM_DIR/nvm.sh" && nvm install $NODEJS_VERSION
 RUN . "$NVM_DIR/nvm.sh" && nvm use v$NODEJS_VERSION
 RUN . "$NVM_DIR/nvm.sh" && nvm alias default v$NODEJS_VERSION
 
+# Set up PATH for root and dependabot users
+ENV PATH="/root/.nvm/versions/node/v$NODEJS_VERSION/bin/:${PATH}"
+USER dependabot
+ENV PATH="/root/.nvm/versions/node/v$NODEJS_VERSION/bin/:${PATH}"
+
 # Install npm
 RUN npm install -g npm@$NPM_VERSION \
-  && rm -rf ~/.npm
+&& rm -rf ~/.npm
 
 RUN echo "NODE Version:" && node --version
 RUN echo "NPM Version:" && npm --version
