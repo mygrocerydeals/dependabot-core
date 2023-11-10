@@ -29,6 +29,8 @@ ENV PATH="/root/.nvm/versions/node/v$NODEJS_VERSION/bin/:${PATH}"
 # Install npm
 RUN npm install -g npm@$NPM_VERSION \
   && rm -rf ~/.npm
+  
+RUN npm install -g corepack
 
 RUN corepack enable
 
