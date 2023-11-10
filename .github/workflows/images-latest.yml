@@ -7,9 +7,6 @@ on:  # yamllint disable-line rule:truthy
       - main
     paths-ignore:
       - "common/lib/dependabot.rb"
-
-permissions:
-  packages: write
   
 jobs:
   date-version:
@@ -57,7 +54,7 @@ jobs:
           docker tag "${UPDATER_IMAGE}${ECOSYSTEM}" "${UPDATER_IMAGE}${ECOSYSTEM}:${{ needs.date-version.outputs.date }}"
 
       - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u mygrocerydeals --password-stdin
+        run: echo "${{ secrets.MGD_GITHUB_TOKEN }}" | docker login ghcr.io -u mygrocerydeals --password-stdin
 
       - name: Push the images to GHCR
         run: docker push --all-tags "${UPDATER_IMAGE}${ECOSYSTEM}"
