@@ -18,7 +18,6 @@ ENV NVM_DIR=/root/.nvm
 RUN . "$NVM_DIR/nvm.sh" && nvm install $NODEJS_VERSION
 RUN . "$NVM_DIR/nvm.sh" && nvm use v$NODEJS_VERSION
 RUN . "$NVM_DIR/nvm.sh" && nvm alias default v$NODEJS_VERSION
-ENV PATH="/root/.nvm/versions/node/v$NODEJS_VERSION/bin/:${PATH}"
 
 # Install npm
 RUN npm install -g npm@$NPM_VERSION \
