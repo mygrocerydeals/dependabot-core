@@ -24,6 +24,9 @@ ENV PATH="/root/.nvm/versions/node/v$NODEJS_VERSION/bin/:${PATH}"
 RUN npm install -g npm@$NPM_VERSION \
   && rm -rf ~/.npm
 
+RUN echo "NODE Version:" && node --version
+RUN echo "NPM Version:" && npm --version
+
 USER dependabot
 
 ENV DEPENDABOT_NATIVE_HELPERS_PATH="/opt"
